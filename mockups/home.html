@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ashmartin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Inter+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #F8F7F4;
+      --fg:      #111111;
+      --muted:   #888888;
+      --accent:  #2B4EFF;
+      --surface: #EFEFED;
+      --border:  rgba(0,0,0,0.09);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:      #0F0F0F;
+        --fg:      #F0EDE8;
+        --muted:   #666666;
+        --accent:  #4F72FF;
+        --surface: #1A1A1A;
+        --border:  rgba(255,255,255,0.08);
+      }
+    }
+
+    html { font-size: 16px; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 48px;
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 10;
+    }
+
+    .nav-logo {
+      font-family: 'Inter Mono', monospace;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--fg);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 14px;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.01em;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active { color: var(--fg); }
+
+    /* ── HERO ── */
+    .hero {
+      display: grid;
+      grid-template-columns: 38% 1fr;
+      gap: 0;
+      padding: 80px 48px 120px;
+      min-height: calc(100vh - 80px);
+      align-items: start;
+    }
+
+    .hero-left {
+      position: sticky;
+      top: 100px;
+    }
+
+    .hero-title {
+      font-size: clamp(52px, 7vw, 96px);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      color: var(--fg);
+    }
+
+    .hero-title span {
+      display: block;
+      opacity: 0;
+      transform: translateY(24px);
+      animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .hero-title span:nth-child(1) { animation-delay: 0.05s; }
+    .hero-title span:nth-child(2) { animation-delay: 0.15s; }
+    .hero-title span:nth-child(3) { animation-delay: 0.25s; }
+
+    .hero-subtitle {
+      margin-top: 28px;
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 28ch;
+      opacity: 0;
+      animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.35s forwards;
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RIGHT COLUMN ── */
+    .hero-right {
+      padding-left: 48px;
+      padding-top: 8px;
+      border-left: 1px solid var(--border);
+    }
+
+    .content-section {
+      margin-bottom: 64px;
+    }
+
+    .section-label {
+      font-family: 'Inter Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    /* ── WRITING LIST ── */
+    .writing-list {
+      list-style: none;
+    }
+
+    .writing-item {
+      border-top: 1px solid var(--border);
+    }
+
+    .writing-item a {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: 16px 0;
+      text-decoration: none;
+      color: var(--fg);
+      gap: 16px;
+      position: relative;
+    }
+
+    .writing-item a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent);
+      transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .writing-item a:hover::after { width: 100%; }
+
+    .writing-item a:hover .item-title { color: var(--accent); }
+
+    .item-title {
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      transition: color 0.2s;
+    }
+
+    .item-meta {
+      font-family: 'Inter Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ── PROJECT LIST ── */
+    .project-list {
+      list-style: none;
+    }
+
+    .project-item {
+      border-top: 1px solid var(--border);
+    }
+
+    .project-item a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      text-decoration: none;
+      color: var(--fg);
+      gap: 16px;
+    }
+
+    .project-item a:hover .project-name { color: var(--accent); }
+
+    .project-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .project-name {
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      transition: color 0.2s;
+    }
+
+    .project-desc {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .project-arrow {
+      font-size: 18px;
+      color: var(--muted);
+      transition: transform 0.2s, color 0.2s;
+    }
+
+    .project-item a:hover .project-arrow {
+      transform: translateX(4px);
+      color: var(--accent);
+    }
+
+    /* ── VIEW ALL ── */
+    .view-all {
+      display: inline-block;
+      margin-top: 20px;
+      font-family: 'Inter Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+
+    .view-all:hover { border-color: var(--accent); }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 32px 48px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    footer span {
+      font-family: 'Inter Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    footer a {
+      font-family: 'Inter Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    footer a:hover { color: var(--accent); }
+
+    .footer-links { display: flex; gap: 24px; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      nav { padding: 20px 20px; }
+
+      .nav-links { gap: 20px; }
+
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 48px 20px 80px;
+        min-height: auto;
+        gap: 56px;
+      }
+
+      .hero-left { position: static; }
+
+      .hero-right {
+        padding-left: 0;
+        border-left: none;
+        border-top: 1px solid var(--border);
+        padding-top: 48px;
+      }
+
+      footer {
+        padding: 24px 20px;
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="home.html" class="nav-logo">ashmartin</a>
+    <ul class="nav-links">
+      <li><a href="writing.html">writing</a></li>
+      <li><a href="projects.html">projects</a></li>
+      <li><a href="about.html">about</a></li>
+    </ul>
+  </nav>
+
+  <main class="hero">
+    <div class="hero-left">
+      <h1 class="hero-title">
+        <span>WRITER,</span>
+        <span>BUILDER,</span>
+        <span>THINKER.</span>
+      </h1>
+      <p class="hero-subtitle">
+        I make digital tools and write about the process —
+        the constraints, the decisions, the things that don't work.
+      </p>
+    </div>
+
+    <div class="hero-right">
+
+      <div class="content-section">
+        <p class="section-label">Recent writing</p>
+        <ul class="writing-list">
+          <li class="writing-item">
+            <a href="article.html">
+              <span class="item-title">The Art of Constraints</span>
+              <span class="item-meta">Mar 2026</span>
+            </a>
+          </li>
+          <li class="writing-item">
+            <a href="article.html">
+              <span class="item-title">Notes on Reading Deeply</span>
+              <span class="item-meta">Feb 2026</span>
+            </a>
+          </li>
+          <li class="writing-item">
+            <a href="article.html">
+              <span class="item-title">On Side Projects and Finishing Things</span>
+              <span class="item-meta">Jan 2026</span>
+            </a>
+          </li>
+          <li class="writing-item">
+            <a href="article.html">
+              <span class="item-title">Why I Write</span>
+              <span class="item-meta">Dec 2025</span>
+            </a>
+          </li>
+        </ul>
+        <a href="writing.html" class="view-all">all writing →</a>
+      </div>
+
+      <div class="content-section">
+        <p class="section-label">Projects</p>
+        <ul class="project-list">
+          <li class="project-item">
+            <a href="projects.html">
+              <div class="project-left">
+                <span class="project-name">typeset</span>
+                <span class="project-desc">A minimal reader for long-form content</span>
+              </div>
+              <span class="project-arrow">→</span>
+            </a>
+          </li>
+          <li class="project-item">
+            <a href="projects.html">
+              <div class="project-left">
+                <span class="project-name">logbook</span>
+                <span class="project-desc">Daily tracking, made simple</span>
+              </div>
+              <span class="project-arrow">→</span>
+            </a>
+          </li>
+        </ul>
+        <a href="projects.html" class="view-all">all projects →</a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <span>© 2026 ashmartin</span>
+    <div class="footer-links">
+      <a href="mailto:hello@ashmartin.com">email</a>
+      <a href="#">twitter</a>
+      <a href="#">github</a>
+    </div>
+  </footer>
+
+</body>
+</html>

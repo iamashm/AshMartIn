@@ -1,0 +1,230 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const projects = await getCollection('projects');
+projects.sort((a, b) => a.data.order - b.data.order);
+
+const active   = projects.filter(p => p.data.status !== 'archived');
+const archived = projects.filter(p => p.data.status === 'archived');
+
+const statusLabel: Record<string, string> = {
+  'live':        'Live',
+  'in-progress': 'In progress',
+  'archived':    'Archived',
+};
+---
+
+<Base title="Projects" description="Things I've built.">
+  <header class="page-header">
+    <h1 class="page-title">Projects</h1>
+  </header>
+
+  <main class="projects-main">
+
+    <div class="project-grid">
+      {active.map((proj, i) => (
+        <a href={`/projects/${proj.id}`} class="project-card">
+          <div class="card-top">
+            <span class="card-num">0{i + 1}</span>
+            <span class:list={['status-badge', proj.data.status]}>
+              {statusLabel[proj.data.status]}
+            </span>
+          </div>
+          <h2 class="card-name">{proj.data.title}</h2>
+          <p class="card-desc">{proj.data.description}</p>
+          <div class="card-footer">
+            <div class="card-tags">
+              {proj.data.stack.slice(0, 2).map(s => <span class="tag">{s}</span>)}
+            </div>
+            <span class="card-arrow">↗</span>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    {archived.length > 0 && (
+      <div class="archived-section">
+        <p class="year-label">Archived</p>
+        <ul class="archived-list">
+          {archived.map(proj => (
+            <li class="archived-item">
+              <a href={`/projects/${proj.id}`}>
+                <span class="archived-name">{proj.data.title}</span>
+                <span class="archived-desc">{proj.data.description}</span>
+                <span class="archived-arrow">→</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+  </main>
+</Base>
+
+<style>
+  .page-header {
+    padding: 72px 48px 56px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-title {
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .projects-main {
+    padding: 64px 48px 80px;
+  }
+
+  /* ── Active project grid */
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .project-card {
+    background: var(--bg);
+    padding: 40px 40px 36px;
+    text-decoration: none;
+    color: var(--fg);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.2s;
+  }
+
+  .project-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 2px;
+    background: var(--accent);
+    transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .project-card:hover::after { width: 100%; }
+  .project-card:hover { background: var(--surface); }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .card-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+  .card-name {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 12px;
+    transition: color 0.2s;
+  }
+
+  .project-card:hover .card-name { color: var(--accent); }
+
+  .card-desc {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.6;
+    flex: 1;
+    margin-bottom: 28px;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .card-tags {
+    display: flex;
+    gap: 6px;
+  }
+
+  .card-arrow {
+    font-size: 20px;
+    color: var(--muted);
+    transition: transform 0.2s, color 0.2s;
+  }
+
+  .project-card:hover .card-arrow {
+    transform: translate(3px, -3px);
+    color: var(--accent);
+  }
+
+  /* ── Archived list */
+  .archived-section {
+    margin-top: 64px;
+  }
+
+  .year-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .archived-list { list-style: none; }
+
+  .archived-item {
+    border-top: 1px solid var(--border);
+  }
+
+  .archived-item a {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+    text-decoration: none;
+    color: var(--muted);
+    transition: color 0.2s;
+  }
+
+  .archived-item a:hover { color: var(--fg); }
+
+  .archived-name {
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .archived-desc {
+    font-size: 13px;
+    flex: 1;
+  }
+
+  .archived-arrow {
+    font-size: 16px;
+    transition: transform 0.2s;
+  }
+
+  .archived-item a:hover .archived-arrow { transform: translateX(4px); }
+
+  /* ── Mobile */
+  @media (max-width: 768px) {
+    .page-header { padding: 48px 20px 40px; }
+    .projects-main { padding: 40px 20px 60px; }
+    .project-grid { grid-template-columns: 1fr; }
+    .project-card { padding: 28px 24px; }
+  }
+</style>

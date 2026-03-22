@@ -1,0 +1,71 @@
+---
+/**
+ * Figure — embedded image with optional caption.
+ *
+ * size variants:
+ *   "full"   — bleeds to content container edge (great for screenshots)
+ *   "prose"  — stays within the reading column (default)
+ *   "half"   — floats right, text wraps around it
+ *   "narrow" — centered, constrained width (good for icons / detail shots)
+ */
+
+interface Props {
+  src:      string;
+  alt:      string;
+  caption?: string;
+  size?:    'full' | 'prose' | 'half' | 'narrow';
+}
+
+const { src, alt, caption, size = 'prose' } = Astro.props;
+---
+
+<figure class:list={['fig', `fig-${size}`]}>
+  <img src={src} alt={alt} loading="lazy" decoding="async" />
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .fig img {
+    width: 100%;
+    display: block;
+  }
+
+  figcaption {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-top: 10px;
+  }
+
+  /* ── size variants */
+
+  .fig-prose {
+    margin: 3em 0;
+  }
+
+  .fig-full {
+    margin: 3em -48px;
+  }
+
+  .fig-half {
+    float: right;
+    width: 48%;
+    margin: 0.5em 0 2em 2.5em;
+    clear: right;
+  }
+
+  .fig-narrow {
+    margin: 3em auto;
+    max-width: 480px;
+  }
+
+  .fig-narrow figcaption {
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    .fig-full  { margin-left: -20px; margin-right: -20px; }
+    .fig-half  { float: none; width: 100%; margin: 2em 0; }
+  }
+</style>

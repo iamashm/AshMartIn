@@ -1,0 +1,316 @@
+---
+import Base from './Base.astro';
+
+interface Props {
+  title:       string;
+  description: string;
+  status:      'live' | 'in-progress' | 'archived';
+  year:        string;
+  type:        string;
+  role:        string;
+  stack:       string[];
+  siteUrl?:    string;
+  repoUrl?:    string;
+  heroImage?:  string;
+  prevProject?: { slug: string; title: string };  // slug = id in v5
+  nextProject?: { slug: string; title: string };
+}
+
+const {
+  title, description, status, year,
+  type, role, stack, siteUrl, repoUrl,
+  heroImage,
+  prevProject, nextProject,
+} = Astro.props;
+
+const statusLabel: Record<string, string> = {
+  'live':        'Live',
+  'in-progress': 'In progress',
+  'archived':    'Archived',
+};
+---
+
+<Base title={title} description={description}>
+
+  <!-- Hero -->
+  {heroImage
+    ? <div class="project-hero"><img src={heroImage} alt={`${title} hero`} class="hero-img" /></div>
+    : <div class="project-hero hero-placeholder" aria-hidden="true"></div>
+  }
+
+  <!-- Header -->
+  <div class="project-header">
+    <a href="/projects" class="back-link mb">← projects</a>
+    <h1 class="project-title">{title}</h1>
+    <div class="project-header-meta">
+      <span class:list={['status-badge', status]}>{statusLabel[status]}</span>
+      <span class="project-year">{year}</span>
+    </div>
+  </div>
+
+  <!-- Overview: description from frontmatter + sidebar metadata -->
+  <section class="project-overview">
+    <div class="overview-body prose">
+      <p>{description}</p>
+    </div>
+    <aside class="overview-sidebar">
+      <div class="sidebar-block">
+        <p class="label">Type</p>
+        <p class="sidebar-value">{type}</p>
+      </div>
+      {stack.length > 0 && (
+        <div class="sidebar-block">
+          <p class="label">Stack</p>
+          <div class="sidebar-tags">
+            {stack.map(s => <span class="tag">{s}</span>)}
+          </div>
+        </div>
+      )}
+      <div class="sidebar-block">
+        <p class="label">Role</p>
+        <p class="sidebar-value">{role}</p>
+      </div>
+      {(siteUrl || repoUrl) && (
+        <div class="sidebar-block">
+          <p class="label">Links</p>
+          {siteUrl && <a href={siteUrl} class="sidebar-link" target="_blank" rel="noopener">Live site ↗</a>}
+          {repoUrl && <a href={repoUrl} class="sidebar-link" target="_blank" rel="noopener">GitHub ↗</a>}
+        </div>
+      )}
+    </aside>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Body writing + embedded images/gallery -->
+  <section class="project-body">
+    <slot />
+  </section>
+
+  <!-- Project navigation -->
+  {(prevProject || nextProject) && (
+    <nav class="project-nav">
+      {prevProject
+        ? <a href={`/projects/${prevProject.id ?? prevProject.slug}`} class="project-nav-item prev">
+            <span class="nav-direction">← prev project</span>
+            <span class="nav-project-name">{prevProject.title}</span>
+          </a>
+        : <div />
+      }
+      {nextProject
+        ? <a href={`/projects/${nextProject.id ?? nextProject.slug}`} class="project-nav-item next">
+            <span class="nav-direction">next project →</span>
+            <span class="nav-project-name">{nextProject.title}</span>
+          </a>
+        : <div />
+      }
+    </nav>
+  )}
+
+</Base>
+
+<style>
+  /* ── Hero */
+  .project-hero {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .hero-img {
+    width: 100%;
+    aspect-ratio: 21 / 9;
+    object-fit: cover;
+    display: block;
+  }
+
+  .hero-placeholder {
+    aspect-ratio: 21 / 9;
+    background: var(--surface);
+  }
+
+  /* ── Header */
+  .project-header {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 56px 48px 48px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 32px;
+    align-items: end;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .back-link.mb {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
+  }
+
+  .project-title {
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .project-header-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
+    padding-bottom: 4px;
+  }
+
+  .project-year {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* ── Overview */
+  .project-overview {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 56px 48px;
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 64px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .overview-body { font-size: 18px; }
+
+  .overview-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .sidebar-value {
+    font-size: 14px;
+    color: var(--fg);
+    line-height: 1.5;
+  }
+
+  .sidebar-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .sidebar-link {
+    font-size: 14px;
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+    display: inline-block;
+    margin-top: 4px;
+  }
+
+  .sidebar-link + .sidebar-link { margin-top: 8px; display: block; }
+  .sidebar-link:hover { border-color: var(--accent); }
+
+  /* ── Divider */
+  .divider {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 48px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── Body */
+  .project-body {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 64px 48px 80px;
+  }
+
+  /* Prose inside project body */
+  .project-body :global(.prose) {
+    max-width: var(--prose-w);
+  }
+
+  /* Figure size overrides relative to project body padding */
+  .project-body :global(.fig-full)  { margin-left: -48px; margin-right: -48px; }
+  .project-body :global(.fig-half)  { float: right; width: 46%; margin: 0.5em 0 2em 2.5em; }
+  .project-body :global(.clearfix::after) { content: ''; display: table; clear: both; }
+
+  /* Gallery section label spacing */
+  .project-body :global(.gallery) { margin-top: 64px; padding-top: 48px; border-top: 1px solid var(--border); }
+
+  /* ── Project nav */
+  .project-nav {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 40px 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  .project-nav-item {
+    text-decoration: none;
+    color: var(--fg);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .project-nav-item.next { align-items: flex-end; }
+
+  .nav-direction {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .nav-project-name {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    transition: color 0.2s;
+  }
+
+  .project-nav-item:hover .nav-project-name { color: var(--accent); }
+
+  /* ── Mobile */
+  @media (max-width: 900px) {
+    .project-overview {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .overview-sidebar {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .project-header {
+      padding: 40px 20px 36px;
+      grid-template-columns: 1fr;
+    }
+
+    .project-header-meta {
+      align-items: flex-start;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .project-overview,
+    .project-body { padding-left: 20px; padding-right: 20px; }
+
+    .project-body :global(.fig-full)  { margin-left: -20px; margin-right: -20px; }
+    .project-body :global(.fig-half)  { float: none; width: 100%; margin: 2em 0; }
+
+    .project-nav { padding: 32px 20px; }
+  }
+</style>

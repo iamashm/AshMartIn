@@ -1,0 +1,182 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="About" description="A bit about ashmartin.">
+  <main class="about-main">
+
+    <section class="about-block">
+      <div class="label">About</div>
+      <div class="about-text prose">
+        <p>
+          I'm ashmartin — a designer and builder based somewhere quiet.
+          I make tools for thinking and reading, and I write about the process:
+          the constraints, the tradeoffs, and the things that didn't work.
+        </p>
+        <p>
+          Most of my work lives at the edge of design and engineering. I care about
+          things that are useful without being complicated, and beautiful without
+          being decorative.
+        </p>
+        <p>
+          Previously at <a href="#">some company</a>. Currently working on
+          <a href="/projects/typeset">typeset</a> and figuring out what's next.
+        </p>
+      </div>
+    </section>
+
+    <section class="now-block">
+      <div class="label">Now</div>
+      <ul class="now-list">
+        <li class="now-item">
+          <span class="now-title">Building typeset v2</span>
+          <span class="now-desc">Redesigning the reading experience with better typography controls.</span>
+        </li>
+        <li class="now-item">
+          <span class="now-title">Writing more, publishing less</span>
+          <span class="now-desc">Trying to develop a consistent practice before worrying about audience.</span>
+        </li>
+        <li class="now-item">
+          <span class="now-title">Reading: <em>Ways of Seeing</em></span>
+          <span class="now-desc">John Berger. Late to it, but it's landing hard.</span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="contact-block">
+      <div class="label">Say hello</div>
+      <div>
+        <div class="contact-links">
+          <a href="mailto:hello@ashmartin.com" class="contact-link">
+            <span class="contact-icon">email</span>
+            hello@ashmartin.com
+          </a>
+          <a href="https://twitter.com/ashmartin" class="contact-link" target="_blank" rel="noopener">
+            <span class="contact-icon">twitter</span>
+            @ashmartin
+          </a>
+          <a href="https://github.com/ashmartin" class="contact-link" target="_blank" rel="noopener">
+            <span class="contact-icon">github</span>
+            ashmartin
+          </a>
+        </div>
+        <p class="contact-note">
+          I'm slow to reply but I do reply. If it's about a project collaboration
+          or something you're building, I'm especially interested.
+        </p>
+      </div>
+    </section>
+
+  </main>
+</Base>
+
+<style>
+  .about-main {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 48px 100px;
+  }
+
+  /* ── Shared block layout */
+  .about-block,
+  .now-block,
+  .contact-block {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 0 64px;
+    padding: 72px 0 64px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── About */
+  .about-text { max-width: 64ch; }
+
+  .about-text p { font-size: 18px; line-height: 1.8; }
+  .about-text p + p { margin-top: 20px; }
+
+  /* ── Now */
+  .now-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .now-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .now-title {
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .now-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ── Contact */
+  .contact-block { border-bottom: none; }
+
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--fg);
+    font-size: 16px;
+    font-weight: 500;
+    width: fit-content;
+    transition: color 0.2s;
+  }
+
+  .contact-link:hover { color: var(--accent); }
+
+  .contact-icon {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    min-width: 52px;
+    transition: color 0.2s;
+  }
+
+  .contact-link:hover .contact-icon { color: var(--accent); }
+
+  .contact-note {
+    margin-top: 32px;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 48ch;
+  }
+
+  /* ── Mobile */
+  @media (max-width: 768px) {
+    .about-main { padding: 0 20px 80px; }
+
+    .about-block,
+    .now-block,
+    .contact-block {
+      grid-template-columns: 1fr;
+      gap: 20px;
+      padding-top: 48px;
+      padding-bottom: 48px;
+    }
+
+    .about-text p { font-size: 16px; }
+  }
+</style>

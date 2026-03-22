@@ -1,0 +1,159 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('writing', e => !e.data.draft);
+posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+// Group by year
+const byYear = posts.reduce<Record<string, typeof posts>>((acc, post) => {
+  const year = post.data.date.getFullYear().toString();
+  (acc[year] ??= []).push(post);
+  return acc;
+}, {});
+
+const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
+
+function fmtDate(d: Date) {
+  return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+}
+---
+
+<Base title="Writing" description="Essays, notes, and ideas.">
+  <header class="page-header">
+    <h1 class="page-title">Writing</h1>
+  </header>
+
+  <main class="writing-main">
+    {years.map(year => (
+      <div class="year-group">
+        <p class="year-label">{year}</p>
+        <ul class="post-list">
+          {byYear[year].map(post => (
+            <li class="post-item">
+              <a href={`/writing/${post.id}`}>
+                <div class="post-left">
+                  <span class="post-title">{post.data.title}</span>
+                  {post.data.tags.length > 0 && (
+                    <div class="post-tags">
+                      {post.data.tags.map(t => <span class="post-tag">{t}</span>)}
+                    </div>
+                  )}
+                </div>
+                <span class="post-date">{fmtDate(post.data.date)}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </main>
+</Base>
+
+<style>
+  .page-header {
+    padding: 72px 48px 56px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-title {
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .writing-main {
+    max-width: 860px;
+    padding: 0 48px 100px;
+  }
+
+  .year-group { padding-top: 56px; }
+
+  .year-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .post-list { list-style: none; }
+
+  .post-item {
+    border-top: 1px solid var(--border);
+    position: relative;
+  }
+
+  .post-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--surface);
+    opacity: 0;
+    transition: opacity 0.2s;
+    margin: 0 -16px;
+    border-radius: 4px;
+    pointer-events: none;
+  }
+
+  .post-item:hover::before { opacity: 1; }
+
+  .post-item a {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 20px 0;
+    text-decoration: none;
+    color: var(--fg);
+    gap: 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .post-left {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .post-title {
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    transition: color 0.2s;
+  }
+
+  .post-item:hover .post-title { color: var(--accent); }
+
+  .post-tags { display: flex; gap: 8px; }
+
+  .post-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--surface);
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+
+  .post-date {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    min-width: 64px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 768px) {
+    .page-header { padding: 48px 20px 40px; }
+    .writing-main { padding: 0 20px 80px; }
+    .post-date { min-width: auto; }
+  }
+</style>

@@ -1,0 +1,158 @@
+---
+import Base from './Base.astro';
+
+interface Props {
+  title:    string;
+  date:     Date;
+  tags?:    string[];
+  excerpt?: string;
+}
+
+const { title, date, tags = [], excerpt } = Astro.props;
+
+const formatted = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+
+// Rough read-time estimate — replaced by actual value from collection if desired
+const { content } = Astro.props as any;
+---
+
+<Base title={title} description={excerpt}>
+
+  <!-- Reading progress bar -->
+  <div id="progress-bar" aria-hidden="true"></div>
+
+  <article class="article-wrap">
+
+    <header class="article-header">
+      <a href="/writing" class="back-link">← writing</a>
+
+      {tags.length > 0 && (
+        <div class="article-tags">
+          {tags.map(t => <span class="tag-label">{t}</span>)}
+        </div>
+      )}
+
+      <h1 class="article-title">{title}</h1>
+
+      <div class="article-meta">
+        <span class="mono-sm">{formatted}</span>
+      </div>
+    </header>
+
+    <div class="prose article-body">
+      <slot />
+    </div>
+
+  </article>
+
+</Base>
+
+<style>
+  /* ── Progress bar */
+  #progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 0%;
+    background: var(--accent);
+    z-index: 100;
+    transition: width 0.1s linear;
+  }
+
+  /* ── Article wrapper */
+  .article-wrap {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 72px 48px 120px;
+  }
+
+  /* ── Header */
+  .article-header {
+    margin-bottom: 56px;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    margin-bottom: 40px;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover { color: var(--accent); }
+
+  .article-tags {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .tag-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .tag-label + .tag-label::before {
+    content: '·';
+    margin-right: 8px;
+  }
+
+  .article-title {
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+
+  .article-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .mono-sm {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* ── Body: figures inside prose */
+  .article-body :global(.fig-full)  { margin-left: -48px; margin-right: -48px; }
+  .article-body :global(.fig-half)  { float: right; width: 46%; margin: 0.5em 0 2em 2.5em; }
+  .article-body :global(figcaption) {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-top: 10px;
+  }
+
+  /* ── Mobile */
+  @media (max-width: 768px) {
+    .article-wrap { padding: 48px 20px 80px; }
+
+    .article-body :global(.fig-full)  { margin-left: -20px; margin-right: -20px; }
+    .article-body :global(.fig-half)  { float: none; width: 100%; margin: 2em 0; }
+  }
+</style>
+
+<script>
+  const bar = document.getElementById('progress-bar');
+  if (bar) {
+    window.addEventListener('scroll', () => {
+      const scrollTop  = window.scrollY;
+      const docHeight  = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width  = docHeight > 0 ? `${(scrollTop / docHeight) * 100}%` : '0%';
+    }, { passive: true });
+  }
+</script>

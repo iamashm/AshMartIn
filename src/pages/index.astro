@@ -1,0 +1,238 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const allWriting = await getCollection('writing', e => !e.data.draft);
+const allProjects = await getCollection('projects');
+
+const recentWriting = allWriting
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 4);
+
+const featuredProjects = allProjects
+  .sort((a, b) => a.data.order - b.data.order)
+  .filter(p => p.data.status !== 'archived')
+  .slice(0, 3);
+
+function fmtDate(d: Date) {
+  return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+}
+---
+
+<Base title="ashmartin">
+  <main class="hero">
+    <div class="hero-left">
+      <h1 class="hero-title">
+        <span>WRITER,</span>
+        <span>BUILDER,</span>
+        <span>THINKER.</span>
+      </h1>
+      <p class="hero-subtitle">
+        I make digital tools and write about the process —
+        the constraints, the decisions, the things that don't work.
+      </p>
+    </div>
+
+    <div class="hero-right">
+
+      {recentWriting.length > 0 && (
+        <div class="content-section">
+          <p class="section-label">Recent writing</p>
+          <ul class="item-list">
+            {recentWriting.map(post => (
+              <li class="item-row">
+                <a href={`/writing/${post.id}`}>
+                  <span class="item-title">{post.data.title}</span>
+                  <span class="item-meta">{fmtDate(post.data.date)}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a href="/writing" class="view-all">all writing →</a>
+        </div>
+      )}
+
+      {featuredProjects.length > 0 && (
+        <div class="content-section">
+          <p class="section-label">Projects</p>
+          <ul class="item-list project-list">
+            {featuredProjects.map(proj => (
+              <li class="item-row project-row">
+                <a href={`/projects/${proj.id}`}>
+                  <div class="project-left">
+                    <span class="item-title">{proj.data.title}</span>
+                    <span class="project-desc">{proj.data.description}</span>
+                  </div>
+                  <span class="project-arrow">→</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a href="/projects" class="view-all">all projects →</a>
+        </div>
+      )}
+
+    </div>
+  </main>
+</Base>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: 38% 1fr;
+    padding: 80px 48px 120px;
+    min-height: calc(100vh - var(--nav-h));
+    align-items: start;
+  }
+
+  .hero-left {
+    position: sticky;
+    top: calc(var(--nav-h) + 24px);
+  }
+
+  .hero-title {
+    font-size: clamp(52px, 7vw, 96px);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+  }
+
+  .hero-title span {
+    display: block;
+    opacity: 0;
+    transform: translateY(24px);
+    animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .hero-title span:nth-child(1) { animation-delay: 0.05s; }
+  .hero-title span:nth-child(2) { animation-delay: 0.15s; }
+  .hero-title span:nth-child(3) { animation-delay: 0.25s; }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-subtitle {
+    margin-top: 28px;
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 28ch;
+    opacity: 0;
+    animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.35s forwards;
+  }
+
+  .hero-right {
+    padding-left: 48px;
+    padding-top: 8px;
+    border-left: 1px solid var(--border);
+  }
+
+  .content-section { margin-bottom: 64px; }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .item-list { list-style: none; }
+
+  .item-row { border-top: 1px solid var(--border); }
+
+  .item-row a {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 16px 0;
+    text-decoration: none;
+    color: var(--fg);
+    gap: 16px;
+    position: relative;
+  }
+
+  .item-row a::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 1px;
+    background: var(--accent);
+    transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .item-row a:hover::after { width: 100%; }
+  .item-row a:hover .item-title { color: var(--accent); }
+
+  .item-title {
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    transition: color 0.2s;
+  }
+
+  .item-meta {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .project-row a { align-items: center; }
+
+  .project-left {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .project-desc { font-size: 13px; color: var(--muted); }
+
+  .project-arrow {
+    font-size: 18px;
+    color: var(--muted);
+    transition: transform 0.2s, color 0.2s;
+    flex-shrink: 0;
+  }
+
+  .project-row a:hover .project-arrow {
+    transform: translateX(4px);
+    color: var(--accent);
+  }
+
+  .view-all {
+    display: inline-block;
+    margin-top: 20px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+
+  .view-all:hover { border-color: var(--accent); }
+
+  @media (max-width: 768px) {
+    .hero {
+      grid-template-columns: 1fr;
+      padding: 48px 20px 80px;
+      min-height: auto;
+      gap: 56px;
+    }
+
+    .hero-left { position: static; }
+
+    .hero-right {
+      padding-left: 0;
+      border-left: none;
+      border-top: 1px solid var(--border);
+      padding-top: 48px;
+    }
+  }
+</style>
