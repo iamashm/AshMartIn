@@ -1,6 +1,8 @@
 ---
 import { getCollection, render } from 'astro:content';
 import ProjectLayout from '../../layouts/ProjectLayout.astro';
+import Figure from '../../components/Figure.astro';
+import Gallery from '../../components/Gallery.astro';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -35,5 +37,5 @@ const d = project.data;
   prevProject={prevProject ? { slug: prevProject.id, title: prevProject.data.title } : undefined}
   nextProject={nextProject ? { slug: nextProject.id, title: nextProject.data.title } : undefined}
 >
-  <Content />
+  <Content components={{ Figure, Gallery }} />
 </ProjectLayout>
