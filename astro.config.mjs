@@ -6,7 +6,7 @@ import keystatic from '@keystatic/astro';
 import netlify from '@astrojs/netlify';
 
 export default defineConfig({
-  output: 'hybrid',
+  output: 'server',
   adapter: netlify(),
   integrations: [mdx(), react(), keystatic()],
 });
