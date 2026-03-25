@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import { getCollection } from 'astro:content';
 
 const allWriting = await getCollection('writing', e => !e.data.draft);
-const allProjects = await getCollection('projects');
+const allProjects = await getCollection('projects', e => !e.data.draft);
 
 const recentWriting = allWriting
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
@@ -23,13 +23,13 @@ function fmtDate(d: Date) {
   <main class="hero">
     <div class="hero-left">
       <h1 class="hero-title">
-        <span>WRITER,</span>
-        <span>BUILDER,</span>
-        <span>THINKER.</span>
+        <span>THINKING,</span>
+        <span>BUILDING,</span>
+        <span>WRITING.</span>
       </h1>
       <p class="hero-subtitle">
-        I make digital tools and write about the process —
-        the constraints, the decisions, the things that don't work.
+        I make things and write about the process - the inspiration,
+        the evolution, where it breaks, and how it works.
       </p>
     </div>
 
@@ -117,7 +117,7 @@ function fmtDate(d: Date) {
     font-size: 15px;
     color: var(--muted);
     line-height: 1.6;
-    max-width: 28ch;
+    max-width: 35ch;
     opacity: 0;
     animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.35s forwards;
   }

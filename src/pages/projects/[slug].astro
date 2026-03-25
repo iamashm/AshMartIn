@@ -5,7 +5,7 @@ import Figure from '../../components/Figure.astro';
 import Gallery from '../../components/Gallery.astro';
 
 export async function getStaticPaths() {
-  const projects = await getCollection('projects');
+  const projects = await getCollection('projects', p => !p.data.draft);
   const sorted   = projects.sort((a, b) => a.data.order - b.data.order);
 
   return sorted.map((proj, i) => ({

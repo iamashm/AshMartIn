@@ -10,6 +10,7 @@ siteUrl: https://typeset.example.com
 repoUrl: https://github.com/ashmartin/typeset
 order: 1
 featured: true
+draft: true
 ---
 
 <Figure
@@ -18,8 +19,6 @@ featured: true
   caption="The original prototype — a single-column layout with no controls. Ugly, but it worked."
   size="full"
 />
-
-<div class="prose">
 
 typeset started as a question: what if reading on the web felt like reading a book?
 Not the content, but the *experience* — quiet, focused, deliberately paced.
@@ -56,16 +55,12 @@ optional. It's the thing.
 > The best typography is invisible. It disappears into the act of reading.
 > You feel it only when it's wrong.
 
-</div>
-
 <Figure
   src="/images/typeset/parser-comparison.jpg"
   alt="Parser output comparison showing raw DOM versus extracted prose"
   caption="Parser output comparison: raw DOM (left) vs. extracted prose (right)."
   size="prose"
 />
-
-<div class="prose">
 
 ## Building the extractor
 
@@ -88,8 +83,6 @@ The most useful lesson was about opinions. Not having them is a design failure.
 Every tool that tries to please everyone ends up serving no one. typeset knows
 what it is. That's the design.
 
-</div>
-
 <Figure
   src="/images/typeset/icon.jpg"
   alt="Final typeset app icon"
@@ -97,11 +90,14 @@ what it is. That's the design.
   size="narrow"
 />
 
-<Gallery images={[
-  { src: '/images/typeset/screen-01.jpg', alt: 'Home view', caption: 'Default reading state' },
-  { src: '/images/typeset/screen-02.jpg', alt: 'Article view', caption: 'Long-form prose rendering' },
-  { src: '/images/typeset/screen-03.jpg', alt: 'Mobile layout', caption: 'Single column, full bleed' },
-  { src: '/images/typeset/screen-04.jpg', alt: 'Dark mode', caption: 'Automatic system detection' },
-  { src: '/images/typeset/screen-05.jpg', alt: 'Typography comparison', caption: 'Measure test across viewports' },
-  { src: '/images/typeset/screen-06.jpg', alt: 'Icon system', caption: 'Status and action indicators' },
-]} />
+<Figure src="/images/typeset/screen-01.jpg" alt="Home view" caption="Default reading state" size="half" />
+
+<Figure src="/images/typeset/screen-02.jpg" alt="Article view" caption="Long-form prose rendering" size="half" />
+
+<Figure src="/images/typeset/screen-03.jpg" alt="Mobile layout" caption="Single column, full bleed" size="half" />
+
+<Figure src="/images/typeset/screen-04.jpg" alt="Dark mode" caption="Automatic system detection" size="half" />
+
+<Figure src="/images/typeset/screen-05.jpg" alt="Typography comparison" caption="Measure test across viewports" size="half" />
+
+<Figure src="/images/typeset/screen-06.jpg" alt="Icon system" caption="Status and action indicators" size="half" />

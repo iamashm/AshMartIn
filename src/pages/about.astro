@@ -86,15 +86,22 @@ import Base from '../layouts/Base.astro';
   .contact-block {
     display: grid;
     grid-template-columns: 220px 1fr;
+    align-items: start;
     gap: 0 64px;
     padding: 72px 0 64px;
     border-bottom: 1px solid var(--border);
   }
 
+  .about-block .label,
+  .now-block .label,
+  .contact-block .label {
+    padding-top: 4px;
+  }
+
   /* ── About */
   .about-text { max-width: 64ch; }
 
-  .about-text p { font-size: 18px; line-height: 1.8; }
+  .about-text p { font-size: 18px; line-height: 1.5; }
   .about-text p + p { margin-top: 20px; }
 
   /* ── Now */

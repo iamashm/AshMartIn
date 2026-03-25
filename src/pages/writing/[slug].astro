@@ -1,6 +1,8 @@
 ---
 import { getCollection, render } from 'astro:content';
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import Figure from '../../components/Figure.astro';
+import Callout from '../../components/Callout.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('writing', e => !e.data.draft);
@@ -17,5 +19,5 @@ const { Content } = await render(post);
   tags={post.data.tags}
   excerpt={post.data.excerpt}
 >
-  <Content />
+  <Content components={{ Figure, Callout }} />
 </ArticleLayout>

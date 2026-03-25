@@ -1,0 +1,47 @@
+---
+title: Vanguartisan
+description: A generative art practice exploring what image models see when they look at history. Currently producing Exposure-series — a 144-piece portrait matrix.
+status: in-progress
+year: "2026"
+type: Generative art practice
+role: Concept, research, engineering
+stack: [Flux2, Claude, Python]
+order: 1
+featured: true
+draft: true
+---
+
+Vanguartisan is a creative practice built around a single question: what can generative image models reveal that conventional image-making can't?
+
+Not illustration. Not replacement. Something more specific — using the systematic properties of these tools (the way they weight language, the way they interpolate between training references, the way they fail) as material in themselves.
+
+## Exposure-series
+
+The first major body of work is Exposure-series: a 144-piece generative portrait matrix.
+
+Twelve historical figures. Twelve twentieth-century portrait photographers. Each figure photographed by each maker — a 12×12 grid where every piece exists in two readable directions at once.
+
+The premise is a specific anachronism: portrait photography arrived too late for any of these figures. The medium that developed the tools for catching power off-guard — Karsh, Avedon, Arbus, Halsman — never had access to Caesar, or Wu Zetian, or Joan of Arc. Exposure-series is an attempt to close that gap, not nostalgically but structurally. No grain simulation. No daguerreotype aesthetic. Clean, contemporary photographs. The anachronism is the point.
+
+<Figure
+  src="/images/vanguartisan/exposure-series-overview.jpg"
+  alt="Overview of the Exposure-series matrix structure"
+  caption="The 12×12 matrix — twelve figures, twelve makers, 144 pieces."
+  size="full"
+/>
+
+## The production pipeline
+
+Running something this systematic required building a pipeline rather than a prompt list. Three agents, each with a defined scope:
+
+**The Series Director** holds the conceptual brief — the premise, the edition standards, the failure modes that disqualify an output from the series.
+
+**The Figure Researcher** does primary source research before any generation begins. Ancient texts, surviving portrait artefacts, numismatic evidence, modern scholarly reconstruction. Nothing goes to the Promptsmith without an approved physical brief.
+
+**The Promptsmith** translates the approved brief into generation-ready prompts. It knows the technical syntax of each tool, the guidance parameter ranges, how Flux2 weights word order.
+
+The pipeline exists to prevent the model's training data from determining the figure's appearance. Without it, you get marble busts — the posthumous idealisation, because that's what the training data is saturated with.
+
+## Current status
+
+Caesar-series is the first sub-series through the full pipeline. Reference images are being established. The full 12×12 matrix is the complete work.
