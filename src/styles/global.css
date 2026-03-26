@@ -267,7 +267,6 @@ img, video {
   border-radius: 4px;
   padding: 1.25em 1.5em;
   margin: 2em 0;
-  overflow-x: auto;
   line-height: 1.65;
 }
 
@@ -278,7 +277,7 @@ img, video {
   background: none;
   padding: 0;
   border-radius: 0;
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 .prose :not(pre) > code {

@@ -2,8 +2,9 @@
 title: What if the photographer had found them first?
 date: 2026-03-25
 tags: [exposure-series, process, generative, flux2, portrait]
+typora-root-url: ../../../public
 excerpt: How Exposure-series started, how the agent pipeline was built, and what we've been learning trying to generate the face of Julius Caesar.
-draft: true
+draft: false
 ---
 
 I've been sitting with a question for a few months now: what would historical figures look like if a great twentieth-century photographer had actually found them?
@@ -11,8 +12,6 @@ I've been sitting with a question for a few months now: what would historical fi
 Not painted. Not sculpted. Not commemorated on a coin with that particular kind of posthumous dignity that tends to strip the personality out. *Photographed.* Found in a room. Put in front of a camera by someone who specialised in catching people off-guard.
 
 That question turned into a project. The project turned into a pipeline. The pipeline has taught me more about how image models actually think (and more importantly, how best to work with them) than anything else I've worked on. These are my process notes.
-
----
 
 ## The premise
 
@@ -25,8 +24,6 @@ Photography never had access to any of them. The medium arrived too late. And th
 Yousuf Karsh's portraits don't flatter. Diane Arbus made the ordinary strange by looking at it too directly. Richard Avedon removed all context and let the face carry everything. What would those approaches find in a Roman general? In the only woman to rule China as Emperor? In Joan of Arc at nineteen?
 
 That's the question the series is trying to answer. Not nostalgically. In this series, there is no noise as grain, no daguerreotype simulation, no sepia. These are clean, contemporary photographs. The anachronism is the point, not the aesthetic.
-
----
 
 ## Building the matrix
 
@@ -44,8 +41,6 @@ The twelve makers: Leibovitz, Karsh, Man Ray, Ritts, Arbus, Penn, Beaton, Avedon
 
 Color was decided at the maker level, not the figure level. Monochromatic makers produce black and white across all twelve of their figures. Some makers (Leibovitz, Penn, Beaton, Parks, Lange) can introduce tonal color, but kept to the level of suggestion rather than declaration: warmth in skin tones, environmental suggestion. Man Ray is the only maker permitted an actual color element, and only where it serves the conceptual reading of the piece. Color used decoratively is a failure mode I keep coming back to.
 
----
-
 ## Building the agent pipeline
 
 Running something this systematic requires a production pipeline, not a prompt list.
@@ -62,13 +57,9 @@ I ended up building four agents, each with a specific role and a specific bounda
 
 The pipeline matters because the failure mode it prevents is subtle and easy to fall into: letting the model's training data determine the figure's appearance. Ask an image model for Julius Caesar without a physical brief anchoring it, and you get a marble bust. You get the posthumous idealisation - because that's what the training data is full of. The Figure Researcher exists to break that chain, to force the physical description to come from primary sources rather than from the accumulated weight of existing imagery.
 
----
-
 ## Learning Flux2 the hard way
 
-!\[Early Hamilton test outputs — five very different faces across five maker prompts]\(./images/hamilton-test-v1-grid.jpg)
-
-The first generation pass used fal.ai. The second used the Black Forest Labs playground directly. The results were not comparable — BFL produces meaningfully better output for this kind of work, and the platform exposes the parameters that actually matter.
+The first generation pass used [fal.ai](https://fal.ai). The second used the [Black Forest Labs](https://bfl.ai) playground directly. The results were not comparable — BFL produces meaningfully better output for this kind of work, and the platform exposes the parameters that actually matter.
 
 The key discoveries, accumulated through iteration:
 
@@ -81,7 +72,6 @@ The key discoveries, accumulated through iteration:
 **The guidance parameter.** Flux2's editing mode doesn't expose an image strength slider — the balance between face preservation and style transformation is controlled through a guidance value (3–8) and prompt construction. Lower guidance keeps the face. Higher guidance allows stronger style transformation at the risk of face drift. Makers whose tradition is confrontational — Avedon, Arbus, Halsman — run at higher guidance. Makers whose work is about psychological intimacy — Leibovitz, Lange — run lower.
 
 ---
-
 ## Caesar's face
 
 Julius Caesar was the first figure through the full pipeline. He was harder than I expected.
@@ -97,41 +87,41 @@ The visual sources are what you'd expect — mostly posthumous, mostly idealised
 There's also a [modern photorealistic reconstruction from Royalty Now Studios](https://www.royaltynowstudios.com/blog/juliuscaesar) based on the Tusculum, Pantelleria, and Arles busts — useful for getting a sense of how the features might read in a living face, though it's a research reference rather than something we'd use as an image input.
 
 ---
-
 ## Iterating with Flux
 
 ![](/images/writing/what-if-the-photographer-had-found-them-first/caesar-gaunt.png)The early Caesar outputs were gaunt. Almost malnourished-looking. The error was in how I'd synthesised the sources: Plutarch's "lean body" had leaked into the face. But Suetonius says "somewhat full face" — and the Tusculum bust confirms it. Full face, lean body, simultaneously. Once I stopped conflating them, the prompt got better.
 
+![](/images/writing/what-if-the-photographer-had-found-them-first/caesar-full-modern.png)
+
 The hair was a separate problem that persisted across four or five iterations. Every time I wrote "combed forward," Flux2 read it as a modern pompadour — swept back, not flat across the forehead. The fix was getting geometric: "short horizontal strands combed directly forward and flat across the forehead, not swept back." The specific geometry mattered in a way that "combed forward" alone didn't.
 
-![](/images/writing/what-if-the-photographer-had-found-them-first/caesar-full-modern.png)
+
 
 The third problem was modernity. An output with correct bone structure and a reasonable hair arrangement still read as a contemporary professional rather than a first-century general and statesman. What was missing were the Tusculum details I'd been underweighting: the heavy brow ridge, the deep nasolabial folds, the weather-beaten textured skin. A face that has spent decades on campaign looks different from a face that has spent decades in an office, and the prompt has to earn that difference explicitly.&#x20;
 
-![](/images/writing/what-if-the-photographer-had-found-them-first/caesar-closer.png)'
+![](/images/writing/what-if-the-photographer-had-found-them-first/caesar-closer.png)
 
 The current R001 prompt — the text-to-image prompt used to generate the neutral reference face:
 
-```
+```html
 Portrait of a man in his early fifties. Full, well-structured face carrying genuine weight — strong cheekbones, defined chin, heavy brow ridge casting shadow over deep-set eyes, the face of someone who commands rooms without raising his voice. Prominent aquiline nose, the defining feature of the profile. Deep nasolabial folds. Hairline sharply receding at the temples, dark hair short, combed directly forward across a high forehead in short horizontal strands — the arrangement specific, effortful, vain. Weather-beaten fair skin, textured and lined, complexion pale beneath years of campaign. Dark piercing eyes. Lines of age on the face and neck. Shot on Hasselblad 503CW, 120mm lens, f/4. Broad even studio lighting, both sides of the face fully lit, catchlight in both eyes. Expression neutral and composed, direct gaze to camera. Deep black background, cropped at collarbone. Monochromatic black and white.
 ```
 
-![](/images/writing/what-if-the-photographer-had-found-them-first/Caesar-R001.png)
+<img src="/images/writing/what-if-the-photographer-had-found-them-first/Caesar-R001.png" style="zoom:33%;" />
+We have an output that holds the right register. The next pass is a targeted edit for face fullness and hair density — using Kontext, which can take an existing image and apply a single precise instruction while preserving everything else. Then three angle variants from the locked R001.
 
-We have an output that holds the right register. The next pass is a targeted edit for face fullness and hair density — using Kontext, which can take an existing image and apply a single precise instruction while preserving everything else. Then three angle variants from the locked R001.&#x20;
-
-![](/images/writing/what-if-the-photographer-had-found-them-first/Caesar-R002.png)
-
-![](/images/writing/what-if-the-photographer-had-found-them-first/Caesar-R003.png)
-
-![](/images/writing/what-if-the-photographer-had-found-them-first/Caesar-R004.png)
+<div style="display: flex; gap: 1rem;">
+  <img src="/images/writing/what-if-the-photographer-had-found-them-first/Caesar-R002.png" style="width: 33%;"/>
+  <img src="/images/writing/what-if-the-photographer-had-found-them-first/Caesar-R003.png" style="width: 33%;"/>
+  <img src="/images/writing/what-if-the-photographer-had-found-them-first/Caesar-R004.png" style="width: 33%;"/>
+</div>
 
 With our four reference angles in place, we will move on to our twelve maker prompts.
 
 The session test for whether a maker prompt output is worth keeping: does it feel *caught* or *constructed*? The pose is not neutral. The expression is a specific psychological state, not a default. The lighting is doing something the figure cannot control. If it reads as a portrait sitting, it fails.
 
-Caesar-series is the first sub-series of twelve. The matrix is the work. More soon.
+Caesar-series is the first sub-series of twelve. The 12x12 matrix is the complete work. More soon.
 
 ---
 
-*Exposure-series is currently in production. Reference images are being established for Caesar-series. The full 12×12 matrix (144 pieces) is the complete work.*
+*Exposure-series is currently in production. Reference images are being established for Caesar-series.*
